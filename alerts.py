@@ -32,7 +32,7 @@ def handle_alert(domain: str, notification: dict, alert_data: dict):
         print(f"Unknown alert type: {alert_type} for domain: {domain}")
 
 
-def discord_webhook(webhook_url: str, domain: str, content: str, alert_blocks: int):
+def discord_webhook(webhook_url: str, domain: str, content: dict, alert_blocks: int):
     """
     Send a message to a Discord webhook.
     """

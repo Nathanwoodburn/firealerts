@@ -140,7 +140,6 @@ def notify_expiries():
     if not domains:
         print("No domains found.")
         return
-    
     current_block = get_current_block()
 
 
@@ -154,7 +153,6 @@ def notify_expiries():
             "time": f"{blocks_remaining // 144} days"  # Assuming 144 blocks per day
         }
         for notification in domains[domain]:
-            print(blocks_remaining, notification['blocks'])
             if notification['blocks'] <= blocks_remaining and notification['blocks'] >= (blocks_remaining - 1): # Just in case there are 2 blocks really close together
                 # Check if last block notified is more than current block + 5
                 if notification.get('last_block_notified', -1) < (current_block - 5):

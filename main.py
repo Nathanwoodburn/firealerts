@@ -4,6 +4,9 @@ import server
 from gunicorn.app.base import BaseApplication
 import os
 import dotenv
+import threading
+import time
+import domains
 
 
 class GunicornApp(BaseApplication):
@@ -14,17 +17,34 @@ class GunicornApp(BaseApplication):
 
     def load_config(self):
         for key, value in self.options.items():
-            if key in self.cfg.settings and value is not None:
-                self.cfg.set(key.lower(), value)
+            if key in self.cfg.settings and value is not None: # type: ignore
+                self.cfg.set(key.lower(), value) # type: ignore
 
     def load(self):
         return self.application
 
-    
-
+def run_expiry_checker():
+    """
+    Background function to run notify_expiries every 2 minutes.
+    """
+    while True:
+        try:
+            print("Running expiry check...")
+            domains.notify_expiries()
+            print("Expiry check completed.")
+        except Exception as e:
+            print(f"Error in expiry checker: {e}")
+        
+        # Wait 2 minutes (120 seconds)
+        time.sleep(120)
 
 if __name__ == '__main__':
     dotenv.load_dotenv()
+    
+    # Start the background expiry checker
+    expiry_thread = threading.Thread(target=run_expiry_checker, daemon=True)
+    expiry_thread.start()
+    print("Started background expiry checker thread")
     
     workers = os.getenv('WORKERS', 1)
     threads = os.getenv('THREADS', 2)

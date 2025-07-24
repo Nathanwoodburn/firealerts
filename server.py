@@ -15,11 +15,28 @@ import json
 import requests
 from datetime import datetime
 import dotenv
+import threading
+import time
+import domains
 
 dotenv.load_dotenv()
 
 app = Flask(__name__)
 
+def run_expiry_checker():
+    """
+    Background function to run notify_expiries every 2 minutes.
+    """
+    while True:
+        try:
+            print("Running expiry check...")
+            domains.notify_expiries()
+            print("Expiry check completed.")
+        except Exception as e:
+            print(f"Error in expiry checker: {e}")
+        
+        # Wait 2 minutes (120 seconds)
+        time.sleep(120)
 
 def find(name, path):
     for root, dirs, files in os.walk(path):
@@ -111,4 +128,9 @@ def not_found(e):
 
 # endregion
 if __name__ == "__main__":
-    app.run(debug=True, port=5000, host="0.0.0.0")
+    # Start the background expiry checker for development mode
+    expiry_thread = threading.Thread(target=run_expiry_checker, daemon=True)
+    expiry_thread.start()
+    print("Started background expiry checker thread")
+    
+    app.run(debug=True, port=5000, host="127.0.0.1")
