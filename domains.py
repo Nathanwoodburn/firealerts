@@ -18,6 +18,7 @@ HSD_PORTS = {
 HSD_PORT = HSD_PORTS.get(HSD_NETWORK, 12037)
 
 HSD_URL_FULL = f'http://x:{HSD_API_KEY}@{HSD_URL}:{HSD_PORT}' if HSD_API_KEY else f'http://{HSD_URL}:{HSD_PORT}'
+print(f"Using HSD URL: {HSD_URL_FULL}")
 
 if not os.path.exists('data'):
     os.makedirs('data')

@@ -7,7 +7,7 @@
     <title>FireAlerts</title>
     <link rel="icon" href="/assets/img/favicon.png" type="image/png">
     <link rel="stylesheet" href="/assets/css/index.css">
-    
+
     <!-- Open Graph meta tags -->
     <meta property="og:title" content="FireAlerts - Account">
     <meta property="og:description" content="Manage your Handshake domain expiry alerts.">
@@ -36,13 +36,13 @@
             <p><strong>Type:</strong> {{notification.notification.type.replace('_', ' ').title()}}</p>
             <p><strong>Blocks before expiry:</strong> {{notification.notification.blocks}}</p>
             {% for notificationType in NOTIFICATION_TYPES %}
-                {% if notificationType.type == notification.notification.type %}
-                    {% for field in notificationType.fields %}
-                    <p><strong>{{field.label}}:</strong> {{notification.notification[field.name]}}</p>
-                    {% endfor %}
-                {% endif %}
+            {% if notificationType.type == notification.notification.type %}
+            {% for field in notificationType.fields %}
+            <p><strong>{{field.label}}:</strong> {{notification.notification[field.name]}}</p>
             {% endfor %}
-            
+            {% endif %}
+            {% endfor %}
+
             <!-- Delete notification button -->
             <a href="/notification/delete/{{notification.notification.id}}" class="button delete-button">Delete</a>
         </div>
@@ -72,15 +72,19 @@
 
 
             {% for field in notificationType.fields %}
+            {% if field.type == 'username' %}
+            <div class="form-group hidden">
+                <label for="{{field.name}}">{{field.label}}:</label>
+                <input type="{{field.type}}" id="{{field.name}}" name="{{field.name}}" {% if field.required %}required{%
+                    endif %} value="{{user.username}}">
+            </div>
+            {% else %}
             <div class="form-group">
                 <label for="{{field.name}}">{{field.label}}:</label>
-                <input 
-                    type="{{field.type}}" 
-                    id="{{field.name}}" 
-                    name="{{field.name}}" 
-                    {% if field.required %}required{% endif %}
-                >
+                <input type="{{field.type}}" id="{{field.name}}" name="{{field.name}}" {% if field.required %}required{%
+                    endif %}>
             </div>
+            {% endif %}
             {% endfor %}
 
             <!-- Add required blocks before expiry field -->
@@ -88,10 +92,18 @@
                 <label for="blocks">Blocks before expiry</label>
                 <input type="number" id="blocks" name="blocks" required min="1" max="50000" value="1008">
                 <!-- Add a note that 144 blocks is 1 day, 1008 blocks is a week, and 4320 blocks is a month -->
-                <p class="note">Note: 144 blocks is approximately 1 day, 1008 blocks is approximately 1 week, and 4320 blocks is approximately 1 month.</p>
+                <p class="note">Note: 144 blocks is approximately 1 day, 1008 blocks is approximately 1 week, and 4320
+                    blocks is approximately 1 month.</p>
             </div>
 
-            <button type="submit" class="button">Add {{notificationType.type.replace('_', ' ').title()}} Notification</button>
+            <button type="submit" class="button">Add {{notificationType.type.replace('_', ' ').title()}}
+                Notification</button>
+
+            {% if notificationType.links %}
+            {% for link in notificationType.links %}
+            <a href="{{link.url}}" target="_blank">{{link.label}}</a>
+            {% endfor %}
+            {% endif %}
         </form>
     </div>
     {% endfor %}

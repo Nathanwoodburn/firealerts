@@ -18,7 +18,8 @@ import dotenv
 import threading
 import time
 import domains
-from alerts import NOTIFICATION_TYPES
+import atexit
+from alerts import NOTIFICATION_TYPES, startTGBot, stopTGBot, handle_alert
 
 dotenv.load_dotenv()
 
@@ -209,6 +210,20 @@ def delete_notification(notification_id: str):
     domains.delete_notification(notification_id, user_data['username'])
     return redirect(f"{request.host_url}account")
 
+@app.route("/telegram/link")
+def telegram_link():
+    """
+    Redirect to Telegram login.
+    """
+    token = request.cookies.get("token")
+    if not token:
+        return redirect(f"https://login.hns.au/auth?return={request.host_url}login")
+    
+    TG_NAME = os.getenv("TELEGRAM_BOT", None)
+    if not TG_NAME:
+        return jsonify({"error": "Telegram bot name not configured"}), 500
+
+    return redirect(f"https://t.me/{TG_NAME}?start={token}")
 
 @app.route("/account/<domain>")
 def account_domain(domain: str):
@@ -327,7 +342,27 @@ def api_add_notification(token: str):
 
 
 # endregion
+@app.route("/test")
+def test():
+    """
+    Test route to check if the server is running.
+    """
+    user = request.args.get("user", "nathan.woodburn")
+    domain_data = {
+            "blocks": 1008,
+            "time": f"{1008 // 144} days"  # Assuming 144 blocks per day
+        }
+    notification = {
+            "username": "nathan.woodburn",
+            "blocks": 1008,
+            "type": "telegram",
+            "id": "f8b5ad1222b9fe636911421147392385",
+            "user_name": "nathan.woodburn"
+    }
+    handle_alert("woodburn", notification, domain_data)
 
+
+    return jsonify({"message": "Server is running"})
 
 # region Error Catching
 # 404 catch all
@@ -342,5 +377,11 @@ if __name__ == "__main__":
     expiry_thread = threading.Thread(target=run_expiry_checker, daemon=True)
     expiry_thread.start()
     print("Started background expiry checker thread")
+    
+    # Start the Telegram bot in a separate thread (only in main process)
+    startTGBot()
+    
+    # Register cleanup function
+    atexit.register(stopTGBot)
     
     app.run(debug=True, port=5000, host="127.0.0.1")

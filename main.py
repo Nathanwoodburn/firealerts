@@ -7,6 +7,7 @@ import dotenv
 import threading
 import time
 import domains
+from alerts import startTGBot, stopTGBot
 
 
 class GunicornApp(BaseApplication):
@@ -38,6 +39,19 @@ def run_expiry_checker():
         # Wait 2 minutes (120 seconds)
         time.sleep(120)
 
+def post_worker_init(worker):
+    """
+    Called just after a worker has been forked.
+    Start the Telegram bot in each worker process.
+    """
+    print(f"Starting Telegram bot in worker {worker.pid}")
+    startTGBot(mainThread=True)
+    
+    # Register cleanup function for this worker
+    import atexit
+    atexit.register(stopTGBot)
+
+
 if __name__ == '__main__':
     dotenv.load_dotenv()
     
@@ -45,6 +59,8 @@ if __name__ == '__main__':
     expiry_thread = threading.Thread(target=run_expiry_checker, daemon=True)
     expiry_thread.start()
     print("Started background expiry checker thread")
+    
+    # Don't start the Telegram bot here - it will be started in worker processes
     
     workers = os.getenv('WORKERS', 1)
     threads = os.getenv('THREADS', 2)
@@ -55,6 +71,7 @@ if __name__ == '__main__':
         'bind': '0.0.0.0:5000',
         'workers': workers,
         'threads': threads,
+        'post_worker_init': post_worker_init,
     }
 
     gunicorn_app = GunicornApp(server.app, options)
