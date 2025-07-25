@@ -240,6 +240,94 @@ def catch_all(path: str):
 
 # endregion
 
+# region API routes
+@app.route("/api/v1/domain/<domain>")
+def api_get_domain(domain: str):
+    """
+    Get the expiry date of a domain.
+    """
+    expiry_date = domains.get_domain_expiry_block(domain)
+    current_block = domains.get_current_block()
+    expires_in_blocks = expiry_date - current_block if expiry_date != -1 else -1
+    
+    return jsonify({"domain": domain, "expiry_date": expiry_date, "expires_in_blocks": expires_in_blocks})
+
+@app.route("/api/v1/current_block")
+def api_get_current_block():
+    """
+    Get the current block number.
+    """
+    current_block = domains.get_current_block()
+    
+    return jsonify({"current_block": current_block})
+
+@app.route("/api/v1/notifications/<token>")
+def api_get_notifications(token: str):
+    """
+    Get all notifications for a user.
+    """
+    user_data = requests.get(f"https://login.hns.au/auth/user?token={token}")
+    if user_data.status_code != 200:
+        return jsonify({"error": "Invalid token"}), 401
+    user_data = user_data.json()
+    
+    notifications = domains.get_account_notifications(user_data["username"])
+    
+    return jsonify(notifications)
+
+@app.route("/api/v1/notifications/<token>", methods=["POST"])
+def api_add_notification(token: str):
+    """
+    Add a notification for a user.
+    """
+    user_data = requests.get(f"https://login.hns.au/auth/user?token={token}")
+    if user_data.status_code != 200:
+        return jsonify({"error": "Invalid token"}), 401
+    user_data = user_data.json()
+    
+    username = user_data.get("username", None)
+    if not username:
+        return jsonify({"error": "Invalid user data"}), 400
+
+    data = request.json
+    if not data or 'domain' not in data or 'blocks' not in data or 'type' not in data:
+        return jsonify({"error": "Invalid request data"}), 400
+    
+    domain = data['domain']
+    
+    notificationtype = data['type']
+    notificationType = None
+    for notification in NOTIFICATION_TYPES:
+        if notification['type'] == notificationtype:
+            notificationType = notification
+            break
+    else:
+        return jsonify({"error": "Invalid notification type"}), 400
+    
+    for field in notificationType['fields']:
+        if field['name'] not in data and field.get('required', False):
+            return jsonify({"error": f"Missing field: {field['name']}"}), 400
+    # Validate blocks
+    try:
+        blocks = int(data['blocks'])
+        if blocks <= 0:
+            return jsonify({"error": "Blocks must be a positive integer"}), 400
+    except ValueError:
+        return jsonify({"error": "Invalid blocks value"}), 400
+    
+    notification = data
+    notification['blocks'] = blocks
+    notification['type'] = notificationtype
+    notification['id'] = os.urandom(16).hex()  # Generate a random ID for the notification
+    notification['user_name'] = username
+    # Delete domain duplicate from data
+    notification.pop('domain', None)
+    domains.add_notification(domain, notification)
+    return jsonify({"message": "Notification added successfully", "notification": notification}), 201
+
+
+# endregion
+
 
 # region Error Catching
 # 404 catch all
