@@ -174,6 +174,15 @@ def addNotification(notificationtype: str):
 
     notification = data
 
+    # Convert blocks to integer
+    try:
+        blocks = int(notification['blocks'])
+        if blocks <= 0:
+            return jsonify({"error": "Blocks must be a positive integer"}), 400
+    except ValueError:
+        return jsonify({"error": "Invalid blocks value"}), 400
+
+    notification['blocks'] = blocks # type: ignore
     notification['type'] = notificationtype
     notification['id'] = os.urandom(16).hex()  # Generate a random ID for the notification
     notification['user_name'] = username
