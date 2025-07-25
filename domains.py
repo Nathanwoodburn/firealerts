@@ -115,6 +115,25 @@ def update_notification(domain: str, notification: dict):
     with open('data/domains.json', 'w') as f:
         json.dump(domains, f, indent=4)
 
+def delete_notification(notification_id: str, user_name: str):
+    """
+    Delete a notification for a domain.
+    """
+    domains = get_domains()
+    domains_to_delete = []
+    
+    for domain in domains:
+        domains[domain] = [n for n in domains[domain] if n['id'] != notification_id or n.get('user_name') != user_name]
+        if not domains[domain]:
+            domains_to_delete.append(domain)
+    
+    # Remove empty domains after iteration
+    for domain in domains_to_delete:
+        del domains[domain]
+    
+    with open('data/domains.json', 'w') as f:
+        json.dump(domains, f, indent=4)
+
 def get_account_notifications(user_name: str) -> list:
     """
     Get all notifications for a specific account.

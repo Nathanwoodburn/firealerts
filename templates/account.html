@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FireAlerts</title>
+    <link rel="icon" href="/assets/img/favicon.png" type="image/png">
+    <link rel="stylesheet" href="/assets/css/index.css">
+</head>
+
+<body>
+    <div class="right">
+        <span class="user">Logged in as {{user.username}}</span>
+        <a href="/logout" class="button">Logout</a>
+    </div>
+
+    <h1>FireAlerts</h1>
+
+    <div class="centre">
+        <h2>Your Alerts</h2>
+    </div>
+
+    <!-- Display existing notifications -->
+    {% if notifications %}
+    <div class="notifications-list">
+        {% for notification in notifications %}
+        <div class="notification-item">
+            <h4>Domain: {{notification.domain}}</h4>
+            <p><strong>Type:</strong> {{notification.notification.type.replace('_', ' ').title()}}</p>
+            <p><strong>Blocks before expiry:</strong> {{notification.notification.blocks}}</p>
+            {% for notificationType in NOTIFICATION_TYPES %}
+                {% if notificationType.type == notification.notification.type %}
+                    {% for field in notificationType.fields %}
+                    <p><strong>{{field.label}}:</strong> {{notification.notification[field.name]}}</p>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+            
+            <!-- Delete notification button -->
+            <a href="/notification/delete/{{notification.notification.id}}" class="button delete-button">Delete</a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-notifications">
+        <p>You have no notifications set up yet.</p>
+        <p>Use the forms below to add new notifications.</p>
+    </div>
+
+    {% endif %}
+
+    <div class="centre">
+        <h2>Setup your alerts below:</h2>
+    </div>
+    <!-- Forms to add notifications -->
+    {% for notificationType in NOTIFICATION_TYPES %}
+    <div class="notification-form">
+        <h3>{{notificationType.description}}</h3>
+        <form method="POST" action="/notification/{{notificationType.type}}">
+            <!-- Domain input -->
+            <div class="form-group">
+                <label for="domain">Domain:</label>
+                <input type="text" id="domain" name="domain" required placeholder="exampledomain">
+            </div>
+
+
+            {% for field in notificationType.fields %}
+            <div class="form-group">
+                <label for="{{field.name}}">{{field.label}}:</label>
+                <input 
+                    type="{{field.type}}" 
+                    id="{{field.name}}" 
+                    name="{{field.name}}" 
+                    {% if field.required %}required{% endif %}
+                >
+            </div>
+            {% endfor %}
+
+            <!-- Add required blocks before expiry field -->
+            <div class="form-group">
+                <label for="blocks">Blocks before expiry</label>
+                <input type="number" id="blocks" name="blocks" required min="1" max="10000" value="1008">
+            </div>
+
+            <button type="submit" class="button">Add {{notificationType.type.replace('_', ' ').title()}} Notification</button>
+        </form>
+    </div>
+    {% endfor %}
+</body>
+
+</html>

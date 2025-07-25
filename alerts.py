@@ -15,6 +15,33 @@ SMTP_PORT = int(os.getenv('SMTP_PORT', 465))
 SMTP_USERNAME = os.getenv('SMTP_USERNAME', None)
 SMTP_PASSWORD = os.getenv('SMTP_PASSWORD', None)
 
+NOTIFICATION_TYPES = [
+    {
+        "type": "discord_webhook",
+        "fields": [
+            {
+                "name": "url",
+                "label": "Discord Webhook URL",
+                "type": "text",
+                "required": True
+            }
+        ],
+        "description": "Send a notification to a Discord channel via webhook."
+    },
+    {
+        "type": "email",
+        "fields": [
+            {
+                "name": "email",
+                "label": "Email Address",
+                "type": "email",
+                "required": True
+            }
+        ],
+        "description": "Send an email notification."
+    }
+]
+
 
 def handle_alert(domain: str, notification: dict, alert_data: dict):
     """

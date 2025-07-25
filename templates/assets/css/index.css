@@ -18,3 +18,115 @@ a {
 a:hover {
     text-decoration: underline;
 }
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+.right {
+    float: right;
+}
+span.user {
+    font-weight: bold;
+    color: #ffffff;
+    margin-inline-end: 5px;
+}
+
+.notification-form {
+    background-color: #1a1a1a;
+    border: 1px solid #333333;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 500px;
+}
+
+.notification-form h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #ffffff;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    background-color: #333333;
+    border: 1px solid #555555;
+    border-radius: 4px;
+    color: #ffffff;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #ffffff;
+    background-color: #444444;
+}
+
+.notifications-list {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.notifications-list h2 {
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.notification-item {
+    background-color: #1a1a1a;
+    border: 1px solid #333333;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.notification-item h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #ffffff;
+    font-size: 18px;
+}
+
+.notification-item p {
+    margin: 5px 0;
+    color: #cccccc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.notification-item p strong {
+    color: #ffffff;
+}
+
+.no-notifications {
+    text-align: center;
+    max-width: 500px;
+    margin: 30px auto;
+    color: #cccccc;
+}
+
+/* Specific handling for long URLs and IDs */
+.notification-item p:contains("URL"),
+.notification-item p:contains("ID") {
+    font-family: monospace;
+    font-size: 12px;
+}
