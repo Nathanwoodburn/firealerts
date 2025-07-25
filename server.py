@@ -342,27 +342,6 @@ def api_add_notification(token: str):
 
 
 # endregion
-@app.route("/test")
-def test():
-    """
-    Test route to check if the server is running.
-    """
-    user = request.args.get("user", "nathan.woodburn")
-    domain_data = {
-            "blocks": 1008,
-            "time": f"{1008 // 144} days"  # Assuming 144 blocks per day
-        }
-    notification = {
-            "username": "nathan.woodburn",
-            "blocks": 1008,
-            "type": "telegram",
-            "id": "f8b5ad1222b9fe636911421147392385",
-            "user_name": "nathan.woodburn"
-    }
-    handle_alert("woodburn", notification, domain_data)
-
-
-    return jsonify({"message": "Server is running"})
 
 # region Error Catching
 # 404 catch all
