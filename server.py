@@ -340,7 +340,6 @@ def api_add_notification(token: str):
     domains.add_notification(domain, notification)
     return jsonify({"message": "Notification added successfully", "notification": notification}), 201
 
-
 # endregion
 
 # region Error Catching

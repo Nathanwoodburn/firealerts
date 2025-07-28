@@ -1,136 +1,238 @@
-body {
-    background-color: #000000;
-    color: #ffffff;
-}
-h1 {
-    font-size: 50px;
+* {
     margin: 0;
     padding: 0;
-}
-.centre {
-    margin-top: 10%;
-    text-align: center;
-}
-a {
-    color: #ffffff;
-    text-decoration: none;
-}
-a:hover {
-    text-decoration: underline;
-}
-.button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #ffffff;
-    color: #000000;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-.right {
-    float: right;
-}
-span.user {
-    font-weight: bold;
-    color: #ffffff;
-    margin-inline-end: 5px;
-}
-
-.notification-form {
-    background-color: #1a1a1a;
-    border: 1px solid #333333;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 20px auto;
-    max-width: 500px;
-}
-
-.notification-form h3 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    color: #ffffff;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #ffffff;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 10px;
-    background-color: #333333;
-    border: 1px solid #555555;
-    border-radius: 4px;
-    color: #ffffff;
-    font-size: 14px;
     box-sizing: border-box;
 }
 
-.form-group input:focus {
-    outline: none;
-    border-color: #ffffff;
-    background-color: #444444;
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    line-height: 1.6;
+    color: #e0e0e0;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+    min-height: 100vh;
 }
 
-.notifications-list {
-    max-width: 800px;
-    margin: 30px auto;
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 0 20px;
 }
 
-.notifications-list h2 {
-    color: #ffffff;
+header {
+    padding: 20px 0;
     text-align: center;
+}
+
+.logo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+main {
+    padding: 40px 0;
+}
+
+.hero {
+    text-align: center;
+    color: white;
+    margin-bottom: 80px;
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 40px;
+    opacity: 0.9;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cta-section {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.button {
+    display: inline-block;
+    padding: 15px 30px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.button.primary {
+    background: #ff6b6b;
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+}
+
+.button.primary:hover {
+    background: #ff5252;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+}
+
+.button.secondary {
+    background: transparent;
+    color: white;
+    border-color: rgba(255,255,255,0.5);
+}
+
+.button.secondary:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: white;
+    transform: translateY(-2px);
+}
+
+.features {
+    background: rgba(30, 30, 46, 0.8);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 60px 40px;
+    margin-bottom: 60px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
+}
+
+.features h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 50px;
+    color: white;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.feature-card {
+    text-align: center;
+    padding: 30px 20px;
+    border-radius: 12px;
+    background: rgba(45, 45, 65, 0.6);
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    background: rgba(55, 55, 75, 0.8);
+}
+
+.feature-icon {
+    font-size: 3rem;
     margin-bottom: 20px;
 }
 
-.notification-item {
-    background-color: #1a1a1a;
-    border: 1px solid #333333;
-    border-radius: 8px;
-    padding: 15px;
+.feature-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: white;
+}
+
+.feature-card p {
+    color: #b0b0b0;
+    line-height: 1.6;
+}
+
+.how-it-works {
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+    padding: 60px 40px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.how-it-works h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 50px;
+    color: white;
+}
+
+.steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+}
+
+.step {
+    text-align: center;
+    color: white;
+}
+
+.step-number {
+    width: 60px;
+    height: 60px;
+    background: #ff6b6b;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 auto 20px;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+}
+
+.step h3 {
+    font-size: 1.5rem;
     margin-bottom: 15px;
 }
 
-.notification-item h4 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: #ffffff;
-    font-size: 18px;
+.step p {
+    opacity: 0.9;
+    line-height: 1.6;
+    color: #b0b0b0;
 }
 
-.notification-item p {
-    margin: 5px 0;
-    color: #cccccc;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.notification-item p strong {
-    color: #ffffff;
-}
-
-.no-notifications {
+footer {
     text-align: center;
-    max-width: 500px;
-    margin: 30px auto;
-    color: #cccccc;
+    padding: 40px 0;
+    color: rgba(255,255,255,0.6);
+    border-top: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Specific handling for long URLs and IDs */
-.notification-item p:contains("URL"),
-.notification-item p:contains("ID") {
-    font-family: monospace;
-    font-size: 12px;
-}
-
-.hidden {
-    display: none;
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .features, .how-it-works {
+        padding: 40px 20px;
+    }
+    
+    .features h2, .how-it-works h2 {
+        font-size: 2rem;
+    }
+    
+    .cta-section {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .button {
+        width: 100%;
+        max-width: 300px;
+    }
 }

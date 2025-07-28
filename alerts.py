@@ -63,7 +63,7 @@ NOTIFICATION_TYPES = [
         "description": "Send a telegram notification.",
         "links": [
             {
-                "label": "Link your Telegram account",
+                "label": "Link your Telegram",
                 "url": "/telegram/link"
             }
         ]

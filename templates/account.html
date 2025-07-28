@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FireAlerts</title>
+    <title>FireAlerts - Account</title>
     <link rel="icon" href="/assets/img/favicon.png" type="image/png">
     <link rel="stylesheet" href="/assets/css/index.css">
+    <link rel="stylesheet" href="/assets/css/account.css">
 
     <!-- Open Graph meta tags -->
     <meta property="og:title" content="FireAlerts - Account">
@@ -16,97 +17,117 @@
 </head>
 
 <body>
-    <div class="right">
-        <span class="user">Logged in as {{user.username}}</span>
-        <a href="/logout" class="button">Logout</a>
-    </div>
-
-    <h1>FireAlerts</h1>
-
-    <div class="centre">
-        <h2>Your Alerts</h2>
-    </div>
-
-    <!-- Display existing notifications -->
-    {% if notifications %}
-    <div class="notifications-list">
-        {% for notification in notifications %}
-        <div class="notification-item">
-            <h4>Domain: {{notification.domain}}</h4>
-            <p><strong>Type:</strong> {{notification.notification.type.replace('_', ' ').title()}}</p>
-            <p><strong>Blocks before expiry:</strong> {{notification.notification.blocks}}</p>
-            {% for notificationType in NOTIFICATION_TYPES %}
-            {% if notificationType.type == notification.notification.type %}
-            {% for field in notificationType.fields %}
-            <p><strong>{{field.label}}:</strong> {{notification.notification[field.name]}}</p>
-            {% endfor %}
-            {% endif %}
-            {% endfor %}
-
-            <!-- Delete notification button -->
-            <a href="/notification/delete/{{notification.notification.id}}" class="button delete-button">Delete</a>
-        </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="no-notifications">
-        <p>You have no notifications set up yet.</p>
-        <p>Use the forms below to add new notifications.</p>
-    </div>
-
-    {% endif %}
-
-    <div class="centre">
-        <h2>Setup your alerts below:</h2>
-    </div>
-    <!-- Forms to add notifications -->
-    {% for notificationType in NOTIFICATION_TYPES %}
-    <div class="notification-form">
-        <h3>{{notificationType.description}}</h3>
-        <form method="POST" action="/notification/{{notificationType.type}}">
-            <!-- Domain input -->
-            <div class="form-group">
-                <label for="domain">Domain:</label>
-                <input type="text" id="domain" name="domain" required placeholder="exampledomain">
+    <div class="container">
+        <header class="account-header">
+            <div class="logo">
+                <a href="/">🔥 FireAlerts</a>
             </div>
-
-
-            {% for field in notificationType.fields %}
-            {% if field.type == 'username' %}
-            <div class="form-group hidden">
-                <label for="{{field.name}}">{{field.label}}:</label>
-                <input type="{{field.type}}" id="{{field.name}}" name="{{field.name}}" {% if field.required %}required{%
-                    endif %} value="{{user.username}}">
+            <div class="user-info">
+                <span class="user">Welcome, {{user.username}}</span>
+                <a href="/logout" class="button secondary">Logout</a>
             </div>
-            {% else %}
-            <div class="form-group">
-                <label for="{{field.name}}">{{field.label}}:</label>
-                <input type="{{field.type}}" id="{{field.name}}" name="{{field.name}}" {% if field.required %}required{%
-                    endif %}>
-            </div>
-            {% endif %}
-            {% endfor %}
+        </header>
 
-            <!-- Add required blocks before expiry field -->
-            <div class="form-group">
-                <label for="blocks">Blocks before expiry</label>
-                <input type="number" id="blocks" name="blocks" required min="1" max="50000" value="1008">
-                <!-- Add a note that 144 blocks is 1 day, 1008 blocks is a week, and 4320 blocks is a month -->
-                <p class="note">Note: 144 blocks is approximately 1 day, 1008 blocks is approximately 1 week, and 4320
-                    blocks is approximately 1 month.</p>
-            </div>
+        <main>
+            <section class="alerts-section">
+                <h2>Your Active Alerts</h2>
+                
+                {% if notifications %}
+                <div class="notifications-grid">
+                    {% for notification in notifications %}
+                    <div class="notification-card">
+                        <div class="notification-header">
+                            <h3>{{notification.domain}}</h3>
+                            <span class="notification-type">{{notification.notification.type.replace('_', ' ').title()}}</span>
+                        </div>
+                        
+                        <div class="notification-details">
+                            <div class="detail-item">
+                                <span class="label">Alert Threshold:</span>
+                                <span class="value">{{notification.notification.blocks}} blocks</span>
+                            </div>
+                            
+                            {% for notificationType in NOTIFICATION_TYPES %}
+                            {% if notificationType.type == notification.notification.type %}
+                            {% for field in notificationType.fields %}
+                            {% if field.name != 'username' %}
+                            <div class="detail-item">
+                                <span class="label">{{field.label}}:</span>
+                                <span class="value">{{notification.notification[field.name]}}</span>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="notification-actions">
+                            <a href="/notification/delete/{{notification.notification.id}}" class="button delete-button" onclick="return confirm('Are you sure you want to delete this notification?')">Delete</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">📭</div>
+                    <h3>No alerts configured</h3>
+                    <p>You haven't set up any domain expiry alerts yet. Use the forms below to add your first notification.</p>
+                </div>
+                {% endif %}
+            </section>
 
-            <button type="submit" class="button">Add {{notificationType.type.replace('_', ' ').title()}}
-                Notification</button>
+            <section class="add-alerts-section">
+                <h2>Add New Alert</h2>
+                <p class="section-description">Set up notifications to be alerted before your Handshake domains expire.</p>
+                
+                <div class="notification-forms">
+                    {% for notificationType in NOTIFICATION_TYPES %}
+                    <div class="notification-form-card">
+                        <div class="form-header">
+                            <h3>{{notificationType.description}}</h3>
+                        </div>
+                        
+                        <form method="POST" action="/notification/{{notificationType.type}}" class="notification-form">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="domain-{{notificationType.type}}">Domain:</label>
+                                    <input type="text" id="domain-{{notificationType.type}}" name="domain" required placeholder="exampledomain">
+                                </div>
 
-            {% if notificationType.links %}
-            {% for link in notificationType.links %}
-            <a href="{{link.url}}" target="_blank">{{link.label}}</a>
-            {% endfor %}
-            {% endif %}
-        </form>
+                                {% for field in notificationType.fields %}
+                                {% if field.type == 'username' %}
+                                <input type="hidden" name="{{field.name}}" value="{{user.username}}">
+                                {% else %}
+                                <div class="form-group">
+                                    <label for="{{field.name}}-{{notificationType.type}}">{{field.label}}:</label>
+                                    <input type="{{field.type}}" id="{{field.name}}-{{notificationType.type}}" name="{{field.name}}" {% if field.required %}required{% endif %} placeholder="Enter {{field.label.lower()}}">
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+
+                                <div class="form-group">
+                                    <label for="blocks-{{notificationType.type}}">Blocks before expiry:</label>
+                                    <input type="number" id="blocks-{{notificationType.type}}" name="blocks" required min="1" max="50000" value="1008">
+                                    <small class="form-note">💡 Tip: 144 blocks ≈ 1 day, 1008 blocks ≈ 1 week, 4320 blocks ≈ 1 month</small>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="button primary">Add {{notificationType.type.replace('_', ' ').title()}} Alert</button>
+                                
+                                {% if notificationType.links %}
+                                {% for link in notificationType.links %}
+                                <a href="{{link.url}}" class="button secondary" target="_blank">{{link.label}}</a>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </main>
     </div>
-    {% endfor %}
 </body>
 
 </html>
