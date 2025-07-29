@@ -135,6 +135,89 @@ def logout():
     return response
 
 
+@app.route("/bulk_upload", methods=["POST"])
+def bulk_upload_notifications():
+    """
+    Bulk upload notifications from a CSV file.
+    """
+    token = request.cookies.get("token")
+    if not token:
+        return redirect(f"https://login.hns.au/auth?return={request.host_url}login")
+    
+    user_data = requests.get(f"https://login.hns.au/auth/user?token={token}")
+    if user_data.status_code != 200:
+        return redirect(f"https://login.hns.au/auth?return={request.host_url}login")
+    user_data = user_data.json()
+    
+    username = user_data.get("username", None)
+    if not username:
+        return jsonify({"error": "Invalid user data"}), 400
+
+    # Check if the request contains a file
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part in the request"}), 400
+    
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+    
+    # Read the CSV file
+    try:
+        content = file.read().decode('utf-8')
+        lines = content.splitlines()
+        for line in lines:
+            parts = line.split(',')
+            if len(parts) < 3:
+                continue  # Skip invalid lines
+            
+            domain = parts[0].strip()
+            blocks = parts[1].strip()
+            notification_type = parts[2].strip().lower() # Normalize to lowercase
+
+            # Find the notification type
+            notificationType = None
+            for notification in NOTIFICATION_TYPES:
+                if notification['type'] == notification_type:
+                    notificationType = notification
+                    break
+            else:
+                return jsonify({"error": f"Invalid notification type: {notification_type}"}), 400
+                continue  # Skip invalid notification types
+            
+
+            # Create the notification data
+            notification_data = {
+                'domain': domain,
+                'blocks': blocks,
+                'type': notification_type,
+                'user_name': username,
+                'id': os.urandom(16).hex()  # Generate a random ID for the notification
+            }
+            
+            arg = 3
+            # Add additional fields based on the notification type
+            for field in notificationType['fields']:
+                if field['name'] not in notification_data and field.get('required', False):
+                    # Try to read the field from the line
+                    if len(parts) > arg:
+                        field_value = parts[arg].strip()
+                        if field_value:
+                            notification_data[field['name']] = field_value
+                        else:
+                            return jsonify({"error": f"Missing required field: {field['name']}"}), 400
+                    else:
+                        # Auto fill default values for username
+                        if field['type'] == 'username':
+                            notification_data[field['name']] = username
+                        else:
+                            return jsonify({"error": f"Missing required field: {field['name']}"}), 400
+            print(notification_data)
+            domains.add_notification(domain, notification_data)
+        
+        return redirect(f"{request.host_url}account")
+    except Exception as e:
+        return jsonify({"error": f"Failed to process file: {str(e)}"}), 500
+
 @app.route("/notification/<notificationtype>", methods=["POST"])
 def addNotification(notificationtype: str):
     """
@@ -251,7 +334,6 @@ def catch_all(path: str):
             return send_file(filename)
 
     return render_template("404.html"), 404
-
 
 # endregion
 

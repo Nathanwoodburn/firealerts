@@ -126,6 +126,28 @@
                     {% endfor %}
                 </div>
             </section>
+
+            <section class="add-alerts-section">
+                <h2>Bulk Upload Domains</h2>
+                <p class="section-description">Upload a CSV file with your Handshake domains to set up multiple alerts at once.</p>
+                <div class="bulk-upload-card">
+                    <form method="POST" action="/bulk_upload" enctype="multipart/form-data" class="bulk-upload-form">
+                        <div class="form-group">
+                            <label for="bulk-file">CSV File:</label>
+                            <input type="file" id="bulk-file" name="file" accept=".csv" required>
+                            <small class="form-note">Upload a CSV file with one domain per line.</small>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="button primary">Upload CSV</button>
+                        </div>
+                    </form>
+                    <div class="bulk-upload-info">
+                        <p>Format: Each line should contain a domain name, followed by the type of notification (e.g., "exampledomain, email") & notification parameters</p>
+                        <p>Example: <code>exampledomain, email</code></p>
+                        <p>Supported types: email, discord, slack, webhook</p>
+                        <p>Download example CSV: <a href="/assets/csv/example.csv" class="button secondary" download>Download Example CSV</a></p>
+                    </div>
+            </section>
         </main>
     </div>
 </body>

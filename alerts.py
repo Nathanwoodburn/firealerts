@@ -262,6 +262,12 @@ def startTGBot(mainThread: bool = False):
         print(
             "Telegram bot token or name not set. Notifications via Telegram will not work.")
         return
+    
+    # Check if DEV=true
+    if os.getenv('DEV', 'false').lower() == 'true':
+        print("Development mode is enabled. Skipping Telegram bot start.")
+        return
+
 
     if TG_bot_running:
         print("Telegram bot is already running.")

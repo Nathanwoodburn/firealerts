@@ -29,6 +29,8 @@
 
 .alerts-section, .add-alerts-section {
     margin-bottom: 60px;
+    max-width: 1000px;
+    margin: 16px auto;
 }
 
 .alerts-section h2, .add-alerts-section h2 {
