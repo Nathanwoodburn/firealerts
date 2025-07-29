@@ -172,6 +172,13 @@ def bulk_upload_notifications():
             
             domain = parts[0].strip()
             blocks = parts[1].strip()
+            try:
+                blocks = int(blocks)
+                if blocks <= 0:
+                    return jsonify({"error": "Blocks must be a positive integer"}), 400
+            except ValueError:
+                return jsonify({"error": "Invalid blocks value"}), 400
+
             notification_type = parts[2].strip().lower() # Normalize to lowercase
 
             # Find the notification type
